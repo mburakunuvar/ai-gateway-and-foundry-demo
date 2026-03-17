@@ -97,13 +97,23 @@ Verify model/version availability per region:
 
 The lab's `main.bicep` references shared Bicep modules at relative paths and a shared `utils` Python module. You must clone the full repo.
 
+Expected layout (`AI-Gateway` cloned inside the demo repo):
+```
+/workspaces/
+└── ai-gateway-and-foundry-demo/   ← your repo
+    ├── AI-Gateway/                ← cloned here
+    └── .venv/                     ← virtual environment at repo root
+```
+
+> **Note:** `AI-Gateway/` and `.venv/` are both listed in `.gitignore` so they won't be tracked by git.
+
 ```bash
+# From your demo repo root (e.g. /workspaces/ai-gateway-and-foundry-demo/)
 git clone https://github.com/Azure-Samples/AI-Gateway.git
-cd AI-Gateway
 python -m venv .venv
 source .venv/bin/activate          # Linux/Mac
 # .\.venv\Scripts\Activate.ps1    # Windows PowerShell
-pip install -r requirements.txt
+pip install -r AI-Gateway/requirements.txt
 pip install ipykernel
 python -m ipykernel install --user --name ai-gateway-venv --display-name "Python (ai-gateway-venv)"
 ```
@@ -115,8 +125,8 @@ python -m ipykernel install --user --name ai-gateway-venv --display-name "Python
 ## Step 2 — Open the notebook in VS Code
 
 ```bash
-cd labs/backend-pool-load-balancing
-code backend-pool-load-balancing.ipynb
+# From your demo repo root
+code AI-Gateway/labs/backend-pool-load-balancing/backend-pool-load-balancing.ipynb
 ```
 
 Select the **"Python (ai-gateway-venv)"** kernel when prompted by VS Code. If it does not appear in the list, click **Refresh** in the kernel picker or reload the VS Code window (`Ctrl+Shift+P` → *Developer: Reload Window*).
@@ -183,11 +193,13 @@ if output.success and output.json_data:
     utils.print_info(f"Subscription ID: {subscription_id}")
 ```
 
-> If you're not logged in yet, run `az login` in a terminal first, then re-run this cell. Use `az account set --subscription "<id>"` to switch subscriptions if needed.
+> Run `az login` in a terminal before running this cell. Use `az account set --subscription "<id>"` to switch subscriptions if needed. The login session persists across terminal restarts in Codespaces.
 
 ---
 
 ## Step 5 — Cell 2️⃣ Create deployment using Bicep
+
+> **Skip this cell if your resources are already deployed.** Proceed directly to Cell 9 (Get deployment outputs) to retrieve the existing deployment's outputs.
 
 This cell:
 1. Creates the resource group via `utils.create_resource_group()`.
@@ -521,7 +533,8 @@ The clean-up notebook calls `utils.cleanup_resources(deployment_name, resource_g
 This happens when the `.venv` was deleted, recreated, or the kernel spec was never registered.
 
 ```bash
-# From the AI-Gateway directory with the venv activated:
+# From your demo repo root (e.g. /workspaces/ai-gateway-and-foundry-demo/)
+source .venv/bin/activate
 pip install ipykernel
 python -m ipykernel install --user --name ai-gateway-venv --display-name "Python (ai-gateway-venv)"
 ```
